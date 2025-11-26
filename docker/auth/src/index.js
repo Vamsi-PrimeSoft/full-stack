@@ -87,12 +87,19 @@ app.post('/auth/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email
+      }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'DB error' });
   }
 });
+
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'auth-service' });
