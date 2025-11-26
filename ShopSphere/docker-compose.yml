@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: shopsphere-mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=shopsphere
+      - MYSQL_USER=shopsphere
+      - MYSQL_PASSWORD=shopsphere
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  gateway:
+    build: ./docker/gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - JWT_SECRET=supersecret
+      - AUTH_URL=http://auth:4001
+      - CATALOG_URL=http://catalog:4002
+      - CART_URL=http://cart:4003
+      - ORDER_URL=http://order:4004
+    depends_on:
+      - auth
+      - catalog
+      - cart
+      - order
+
+  auth:
+    build: ./docker/auth
+    environment:
+      - PORT=4001
+      - JWT_SECRET=supersecret
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=shopsphere
+      - DB_PASSWORD=shopsphere
+      - DB_NAME=shopsphere
+    depends_on:
+      - mysql
+
+  catalog:
+    build: ./docker/catalog
+    environment:
+      - PORT=4002
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=shopsphere
+      - DB_PASSWORD=shopsphere
+      - DB_NAME=shopsphere
+    depends_on:
+      - mysql
+
+  cart:
+    build: ./docker/cart
+    environment:
+      - PORT=4003
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=shopsphere
+      - DB_PASSWORD=shopsphere
+      - DB_NAME=shopsphere
+    depends_on:
+      - mysql
+
+  order:
+    build: ./docker/order
+    environment:
+      - PORT=4004
+      - CART_URL=http://cart:4003
+      - CATALOG_URL=http://catalog:4002
+      - PAYMENT_URL=http://payment:4005
+      - NOTIFICATION_URL=http://notification:4006
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=shopsphere
+      - DB_PASSWORD=shopsphere
+      - DB_NAME=shopsphere
+    depends_on:
+      - mysql
+
+  payment:
+    build: ./docker/payment
+    environment:
+      - PORT=4005
+
+  notification:
+    build: ./docker/notification
+    environment:
+      - PORT=4006
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=shopsphere
+      - DB_PASSWORD=shopsphere
+      - DB_NAME=shopsphere
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE=http://localhost:4000
+    depends_on:
+      - gateway
+
+volumes:
+  mysql_data:

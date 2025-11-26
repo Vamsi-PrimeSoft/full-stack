@@ -1,0 +1,35 @@
+{
+  "family": "shopsphere-gateway",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "gateway",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-gateway:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 4000, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4000" },
+        { "name": "JWT_SECRET", "value": "supersecret" },
+        { "name": "AUTH_URL", "value": "http://auth.shopsphere.local:4001" },
+        { "name": "CATALOG_URL", "value": "http://catalog.shopsphere.local:4002" },
+        { "name": "CART_URL", "value": "http://cart.shopsphere.local:4003" },
+        { "name": "ORDER_URL", "value": "http://order.shopsphere.local:4004" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-gateway",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

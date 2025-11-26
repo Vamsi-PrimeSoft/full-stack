@@ -1,0 +1,30 @@
+{
+  "family": "shopsphere-notification",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "notification",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-notification:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 4006, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4006" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-notification",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

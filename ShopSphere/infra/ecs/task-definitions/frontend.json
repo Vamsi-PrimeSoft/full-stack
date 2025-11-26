@@ -1,0 +1,33 @@
+{
+  "family": "shopsphere-frontend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-frontend:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 5173, "protocol": "tcp" }
+      ],
+      "environment": [
+        {
+          "name": "VITE_API_BASE",
+          "value": "http://<gateway-alb-dns-or-internal-url>"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-frontend",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
