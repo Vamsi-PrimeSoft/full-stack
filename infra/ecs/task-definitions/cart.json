@@ -1,0 +1,30 @@
+{
+  "family": "shopsphere-cart",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "cart",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-cart:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 4003, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4003" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-cart",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

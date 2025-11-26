@@ -1,0 +1,34 @@
+{
+  "family": "shopsphere-order",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "order",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-order:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 4004, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4004" },
+        { "name": "CART_URL", "value": "http://cart.shopsphere.local:4003" },
+        { "name": "CATALOG_URL", "value": "http://catalog.shopsphere.local:4002" },
+        { "name": "PAYMENT_URL", "value": "http://payment.shopsphere.local:4005" },
+        { "name": "NOTIFICATION_URL", "value": "http://notification.shopsphere.local:4006" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-order",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

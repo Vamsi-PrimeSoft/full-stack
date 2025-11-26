@@ -1,0 +1,30 @@
+{
+  "family": "shopsphere-payment",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "payment",
+      "image": "123456789012.dkr.ecr.ap-south-1.amazonaws.com/shopsphere-payment:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 4005, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4005" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsphere-payment",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
